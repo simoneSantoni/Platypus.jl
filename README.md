@@ -8,7 +8,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 <p align="center">
-  <img src="docs/src/assets/logo.svg" alt="Platypus.jl icon" width="160">
+  <img src="docs/src/assets/logo.png" alt="Platypus.jl icon" width="160">
 </p>
 
 A Julia package for measuring **entity atypicality** in large, heterogeneous sets — and, in particular, in sets whose reference population has no clean boundary.
