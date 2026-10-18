@@ -1,0 +1,9 @@
+example,max_error,tolerance,status
+triangle_depth_none_percentiles,0.0,1.0e-10,pass
+triangle_depth_rank_percentiles,0.0,1.0e-10,pass
+weighted_constant_kde_percentiles,0.0,1.0e-10,pass
+lof_original_raw_oracle,2.220446049250313e-16,1.0e-10,pass
+lof_reflected_raw_oracle,2.220446049250313e-16,1.0e-10,pass
+lof_reflection_percentiles,0.0,1.0e-10,pass
+depth_before_offset_raw_oracle,0.0,1.0e-10,pass
+depth_after_offset_raw_oracle,0.0,1.0e-10,pass

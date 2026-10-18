@@ -1,0 +1,8 @@
+Julia 1.10.12; Platypus 0.2.0
+Seeds: 101, 202, 303; Threads: 1
+CPU: goldmont; architecture: x86_64
+n=160; anomalies=12; rank transform; default k; exact kdtree; no tuning
+Target: full-feature self-tuning graph connectivity; no novelty summary.
+Same generators and metrics as experiments.jl; original results were not rerun.
+Endogenous in-sample comparison; timings indicative after a four-feature warm-up.
+First fits at three/eight features can include dimension-specific compilation.

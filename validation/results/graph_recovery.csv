@@ -1,0 +1,16 @@
+scenario,seed,method,target,summary,n,features,prevalence,auc,average_precision,precision_at_m,k,n_edges,n_components,seconds,bytes
+independent,101,self_tuning_graph,full_feature_connectivity,atypicality,160,4,0.075,0.526463963963964,0.08752135486536801,0.0,13,1287,1,0.004287142,638880
+independent,202,self_tuning_graph,full_feature_connectivity,atypicality,160,4,0.075,0.5337837837837838,0.08492103548313477,0.0,13,1271,1,0.00448795,654704
+independent,303,self_tuning_graph,full_feature_connectivity,atypicality,160,4,0.075,0.606418918918919,0.14404805761662354,0.16666666666666666,13,1276,1,0.004066231,655232
+dependence,101,self_tuning_graph,full_feature_connectivity,atypicality,160,4,0.075,0.9847972972972973,0.8498515158731876,0.6666666666666666,13,1248,1,0.003819706,657440
+dependence,202,self_tuning_graph,full_feature_connectivity,atypicality,160,4,0.075,0.9791666666666666,0.8925234487734487,0.8333333333333334,13,1250,1,0.003603019,607648
+dependence,303,self_tuning_graph,full_feature_connectivity,atypicality,160,4,0.075,0.856418918918919,0.780310831426392,0.75,13,1247,1,0.003745124,660224
+unequal_clusters,101,self_tuning_graph,full_feature_connectivity,atypicality,160,4,0.075,0.033783783783783786,0.04281323759360474,0.0,13,1259,1,0.004730634,651744
+unequal_clusters,202,self_tuning_graph,full_feature_connectivity,atypicality,160,4,0.075,0.021396396396396396,0.042418613722533985,0.0,13,1288,1,0.00433152,655312
+unequal_clusters,303,self_tuning_graph,full_feature_connectivity,atypicality,160,4,0.075,0.05067567567567568,0.04359670721379184,0.0,13,1282,2,0.003721174,654832
+irrelevant_features,101,self_tuning_graph,full_feature_connectivity,atypicality,160,8,0.075,0.8665540540540541,0.6705217297322559,0.5833333333333334,13,1342,1,0.660928788,55294120
+irrelevant_features,202,self_tuning_graph,full_feature_connectivity,atypicality,160,8,0.075,0.8907657657657657,0.5846133369903861,0.5,13,1304,1,0.004619974,744272
+irrelevant_features,303,self_tuning_graph,full_feature_connectivity,atypicality,160,8,0.075,0.8885135135135135,0.6146300669214486,0.5,13,1318,1,0.004686789,752064
+higher_order,101,self_tuning_graph,full_feature_connectivity,atypicality,160,3,0.075,0.7269144144144144,0.4149663083926667,0.3333333333333333,13,1255,1,0.357433035,16361016
+higher_order,202,self_tuning_graph,full_feature_connectivity,atypicality,160,3,0.075,0.7561936936936937,0.5296430148240524,0.4166666666666667,13,1267,1,0.003560531,630672
+higher_order,303,self_tuning_graph,full_feature_connectivity,atypicality,160,3,0.075,0.8958333333333334,0.5992445531972272,0.5,13,1242,1,0.003695093,627520

@@ -1,0 +1,121 @@
+Artifact integrity verified against deterministic generators and result tables.
+Datasets: 84; checks: 14637; recorded violations: 2
+Package source SHA256 matches original run: db82394061298f3abe5edc4dde3f31f1fff8e843fbc3bd4e32bf8a4c0de08672
+Julia Version 1.13.2
+Commit 45b6d15e34b (2026-10-14 20:33 UTC)
+Build Info:
+  Official https://julialang.org release
+Platform Info:
+  OS: Linux (x86_64-linux-gnu)
+  CPU: 32 × Intel(R) Core(TM) i9-14900HX
+  WORD_SIZE: 64
+  LLVM: libLLVM-20.1.8 (ORCJIT, raptorlake)
+  GC: Built with stock GC
+Threads: 2 default, 1 interactive, 2 GC (on 32 virtual cores)
+Environment:
+  JULIA_DEPOT_PATH = /tmp/platypus-review-julia-depot:/home/simon/.julia
+BLAS configuration: LBTConfig([ILP64] libopenblas64_.so)
+BLAS threads: 16
+
+Script SHA256:
+3f11460a3e5b90d8c6644a4b60f597f0c6c086f5a25bae35ad0aac55cf79392f  datasets.jl
+fd1043fd26d2f0976c2dd00596efb2f298c4d5120575446033414fa7c89765a0  run.jl
+2e57fc0ed8b453147d11a17ca98434832c6a9a52954039a5274a2bc22039f663  reproduce.jl
+97f3d16925bb814daa4884815271ba7ded7375f42ebe418c684ccd79cc282848  plot_results.py
+b89aeaf11386807a32a7df35bc9e0907fe24ba43d562d3679c5305ffe2dd9efe  compare_repairs.py
+95621ad322a261c5d5fef23290159330c2da6f59a91735092cfa177d1e2491de  verify_artifacts.jl
+
+Resolved dependency versions:
+Manifest SHA256: 3bc6075cbe2cf5b1c5b0c777963c1e8317df37b56cdadc9c0220dc79249e5d14
+AbstractTrees 0.4.5 uuid=1520ce14-60c1-5f80-bbc7-55ef81b5835c tree=2d9c9a55f9c93e8887ad391fbae72f8ef55e1177
+Accessors 0.1.45 uuid=7d9f7c33-5ae7-4f3b-8dc6-eff91059b697 tree=7063ad1083578215c7c4bf410368150abe8d5524
+AliasTables 1.1.3 uuid=66dad0bd-aa9a-41b7-9441-69ab47430ed8 tree=9876e1e164b144ca45e9e3198d0b689cadfed9ff
+Artifacts 1.11.0 uuid=56f22d72-fd6d-98f1-02f0-08ddc0907c33 tree=stdlib/path
+Base64 1.11.0 uuid=2a0f44e3-6c83-55bd-87e4-b1978d98bd5f tree=stdlib/path
+CSV 0.10.17 uuid=336ed68f-0bac-5ca0-87d4-7b16caf5d00b tree=abed1e735dd4152f48c90cf0767e1790e25f332f
+CodecZlib 0.7.9 uuid=944b1d66-785c-5afd-91f1-9de20f533193 tree=970758a3d591a2a5c2a907c53f2e2f8c1b1d3537
+CommonSolve 0.2.14 uuid=38540f10-b2f7-11e9-35d8-d573e4eb0ff2 tree=6c389fa857f6ca5a95474b52a52023fd77f24cb7
+Compat 4.18.1 uuid=34da2185-b29b-5c13-b0c7-acf172513d20 tree=9d8a54ce4b17aa5bdce0ea5c34bc5e7c340d16ad
+CompilerSupportLibraries_jll 1.5.5+2 uuid=e66e0078-7015-5450-92f7-15fbd957f2ae tree=stdlib/path
+CompositionsBase 0.1.2 uuid=a33af91c-f02d-484b-be07-31d278c5ca2b tree=802bb88cd69dfd1509f6670416bd4434015693ad
+ConstructionBase 1.6.0 uuid=187b0558-2788-49d3-abe0-74a17ed4e7c9 tree=b4b092499347b18a015186eae3042f72267106cb
+Crayons 4.2.0 uuid=a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f tree=54b76cbb40d9a0f5368c880725b2f141da77c94f
+DataAPI 1.16.0 uuid=9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a tree=abe83f3a2f1b857aac70ef8b269080af17764bbe
+DataFrames 1.8.2 uuid=a93c6f00-e57d-5684-b7b6-d8193f3e46c0 tree=5fab31e2e01e70ad66e3e24c968c264d1cf166d6
+DataStructures 0.19.6 uuid=864edb3b-99cc-5e75-8d2d-829cb0a9cfe8 tree=b0bc6d2cad1fed8b7fd59a1551a991cb3d2809e6
+DataValueInterfaces 1.0.0 uuid=e2d170a0-9d28-54be-80f0-106bbe20a464 tree=bfc1187b79289637fa0ef6d4436ebdfe6905cbd6
+Dates 1.11.0 uuid=ade2ca70-3891-5945-98fb-dc099432e06a tree=stdlib/path
+Distances 0.10.12 uuid=b4f34e82-e78d-54a5-968a-f98e89d6e8f7 tree=c7e3a542b999843086e2f29dac96a618c105be1d
+Distributions 0.25.131 uuid=31c24e10-a181-5473-b8eb-7969acd0382f tree=a958ab3a40c755563f5e1405c0846cb0446bf19d
+DocStringExtensions 0.10.0 uuid=ffbed154-4ef7-542d-bbb7-c09d3a79fcae tree=8eeb56c16e74c6592afc69d2bb9e6082ba6aa850
+FilePathsBase 0.9.24 uuid=48062228-2e41-5def-b9a4-89aafe57970f tree=3bab2c5aa25e7840a4b065805c0cdfc01f3068d2
+FileWatching 1.11.0 uuid=7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee tree=stdlib/path
+FillArrays 1.18.1 uuid=1a297f60-69ca-5386-bcde-b61e274b549b tree=417289ac840d201005d9ed16789a46defccbe36d
+Future 1.11.0 uuid=9fa8497b-333b-5362-9e8d-4d0656e87820 tree=stdlib/path
+Gamma 1.2.0 uuid=a0844989-3bd2-4988-8bea-c9407ab0941b tree=becc397f7cfb06e343496ae6ffb04818a851da51
+HypergeometricFunctions 0.3.30 uuid=34004b35-14d8-5ef3-9330-4cdb6864b03a tree=31bb6c92405c084617facc1d7ed9eb6c402d061e
+InlineStrings 1.4.6 uuid=842dd82b-1e85-43dc-bf29-5d0ee9dffc48 tree=06b65886c7577a3784d616e29f1302c2e36e389d
+InteractiveUtils 1.11.0 uuid=b77e0a4c-d291-57a0-90e8-8db25a27a240 tree=stdlib/path
+InverseFunctions 0.1.17 uuid=3587e190-3f89-42d0-90ee-14403ec27112 tree=a779299d77cd080bf77b97535acecd73e1c5e5cb
+InvertedIndices 1.3.1 uuid=41ab1584-1d38-5bbf-9106-f11c6c58b48f tree=6da3c4316095de0f5ee2ebd875df8721e7e0bdbe
+IrrationalConstants 0.2.6 uuid=92d709cd-6900-40b7-9082-c6be49f344b6 tree=b2d91fe939cae05960e760110b328288867b5758
+IteratorInterfaceExtensions 1.0.0 uuid=82899510-4779-5014-852e-03e436cf321d tree=a3f24677c21f5bbe9d2a714f95dcd58337fb2856
+JLLWrappers 1.8.0 uuid=692b3bcd-3c85-4b1f-b108-f13ce0eb3210 tree=7204148362dafe5fe6a273f855b8ccbe4df8173e
+JuliaSyntaxHighlighting 1.12.0 uuid=ac6e5ff7-fb65-4e79-a425-ec3bc9c03011 tree=stdlib/path
+LaTeXStrings 1.4.1 uuid=b964fa9f-0449-5b57-a5c2-d3ea65f4040f tree=f88f3ccef05a6a72a0cf0ed417c8fd68530f4ab2
+Libdl 1.11.0 uuid=8f399da3-3557-5675-b5ff-fb832c97cbdb tree=stdlib/path
+LinearAlgebra 1.13.0 uuid=37e2e46d-f89d-539d-b4ee-838fcccc9c8e tree=stdlib/path
+LogExpFunctions 1.0.3 uuid=2ab3a3ac-af41-5b50-aa03-7779005ae688 tree=28d620bcdb37a3fb02de9f521928ee453690f414
+MacroTools 0.5.16 uuid=1914dd2f-81c6-5fcd-8719-6d5c9610ff09 tree=1e0228a030642014fe5cfe68c2c0a818f9e3f522
+Markdown 1.11.0 uuid=d6f4376e-aef5-505a-96c1-9c027394607a tree=stdlib/path
+Missings 1.2.0 uuid=e1d29d7a-bbdc-5cf2-9ac0-f12de2c33e28 tree=ec4f7fbeab05d7747bdf98eb74d130a2a2ed298d
+Mmap 1.11.0 uuid=a63ad114-7e13-5084-954f-fe012c677804 tree=stdlib/path
+NearestNeighbors 0.4.29 uuid=b8a86587-4115-5ab1-83bc-aa920d37bbce tree=576eb4656529c12e77a46b17c23103dfba9fa570
+OpenBLAS_jll 0.3.30+0 uuid=4536629a-c528-5b80-bd46-f80d51c5b363 tree=stdlib/path
+OpenLibm_jll 0.8.7+0 uuid=05823500-19ac-5b8b-9628-191a04bc5112 tree=stdlib/path
+OpenSpecFun_jll 0.5.6+0 uuid=efe28fd5-8261-553b-a9e1-b2916fc3738e tree=1346c9208249809840c91b26703912dff463d335
+OrderedCollections 2.0.3 uuid=bac558e1-5e72-5ebc-8fee-abe8a469f55d tree=b079a6affebde167dad8ffe0d670b53917fbcb68
+PDMats 0.11.41 uuid=90014a1f-27ba-587c-ab20-58faa44d9150 tree=123266c25174ef6c8d4718920abc206452cf8de6
+Parsers 2.8.8 uuid=69de0a69-1ddd-5017-9359-2bf0b02dc9f0 tree=ba0dc8a8a67cacac4842631f960c046e4e563675
+Platypus 0.2.0 uuid=b6f3a2e4-9c1d-4e7a-8f2b-3d5c6a7e8f90 tree=stdlib/path
+PooledArrays 1.4.3 uuid=2dfb63ee-cc39-5dd5-95bd-886bf059d720 tree=36d8b4b899628fb92c2749eb488d884a926614d3
+PrecompileTools 1.3.4 uuid=aea7be01-6a6a-4083-8856-8a6e6704d82a tree=edbeefc7a4889f528644251bdb5fc9ab5348bc2c
+Preferences 1.6.1 uuid=21216c6a-2e73-6563-6e65-726566657250 tree=aef1987d90dcc2e2cbd919ad10b2d25bcce4f418
+PrettyTables 3.5.0 uuid=08abe8d2-0d0c-5749-adfa-8a2ac140af0d tree=99fd8f32ab6728ff205cddd24e2d9ea6cbb498d3
+Printf 1.11.0 uuid=de0858da-6303-5e67-8744-51eddeeeb8d7 tree=stdlib/path
+PtrArrays 1.4.0 uuid=43287f4e-b6f4-7ad1-bb20-aadabca52c3d tree=4fbbafbc6251b883f4d2705356f3641f3652a7fe
+QuadGK 2.11.3 uuid=1fd47b50-473d-5c70-9696-f719f8f3bcdc tree=5e8e8b0ab68215d7a2b14b9921a946fee794749e
+REPL 1.11.0 uuid=3fa0cd96-eef1-5676-8a61-b3b8758bbffb tree=stdlib/path
+Random 1.11.0 uuid=9a3f8284-a2c9-5f02-9a11-845980a1fd5c tree=stdlib/path
+RecipesBase 1.4.0 uuid=3cdcf5f2-1ef4-517c-9805-6587b60abb01 tree=0c0dcffc464cda2ff33fc8ffc1dd1bdd53cd98be
+Reexport 1.2.2 uuid=189a3867-3050-52da-a836-e630ba90ab69 tree=45e428421666073eab6f2da5c9d310d99bb12f9b
+Rmath 0.9.0 uuid=79098fc4-a85e-5d69-aa6a-4863f24498fa tree=5b3d50eb374cea306873b371d3f8d3915a018f0b
+Rmath_jll 0.5.2+0 uuid=f50d1b31-88e8-58de-be2c-1cc44531875f tree=6d40b2fe70437b01397d2a4d5b020008da4e7019
+Roots 3.0.11 uuid=f2b01f46-fcfa-551c-844a-d8ac1e96c665 tree=e6ffa7bd4f8d0b8744d18f219304738d952f9a37
+SHA 1.0.0 uuid=ea8e919c-243c-51af-8825-aaa63cd721ce tree=stdlib/path
+SentinelArrays 1.4.10 uuid=91c51154-3ec4-41a3-a24f-3f23e20d615c tree=084c47c7c5ce5cfecefa0a98dff69eb3646b5a80
+Serialization 1.11.0 uuid=9e88b42a-f829-5b0c-bbe9-9e923198166b tree=stdlib/path
+Sockets 1.11.0 uuid=6462fe0b-24de-5631-8697-dd941f90decc tree=stdlib/path
+SortingAlgorithms 1.2.3 uuid=a2af1166-a08f-5f64-846c-94a0d3cef48c tree=13cd91cc9be159e3f4d95b857fa2aa383b53772a
+SparseArrays 1.13.0 uuid=2f01184e-e22b-5df5-ae63-d93ebab69eaf tree=stdlib/path
+SpecialFunctions 2.9.0 uuid=276daf66-3868-5448-9aa4-cd146d93841b tree=429071b23f4c9a13fb6582f807cc2ef454082408
+StaticArrays 1.9.23 uuid=90137ffa-7385-5640-81b9-e52037218182 tree=de349d5585559b692f518b6d3fc7c179d64b2364
+StaticArraysCore 1.4.4 uuid=1e83bf80-4336-4d27-bf5d-d5a4f845583c tree=6ab403037779dae8c514bad259f32a447262455a
+Statistics 1.11.5 uuid=10745b16-79ce-11e8-11f9-7d13ad32a3b2 tree=e2b53ce13a53367e96601081e33d34746b571bad
+StatsAPI 1.8.0 uuid=82ae8749-77ed-4fe6-ae5f-f523153014b0 tree=178ed29fd5b2a2cfc3bd31c13375ae925623ff36
+StatsBase 0.34.13 uuid=2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91 tree=adb9da019510162e67a4493fc235c23203d8b09e
+StatsFuns 2.2.1 uuid=4c63d2b9-4356-54db-8cca-17b64c39e42c tree=91a5737baed20ee31f3faea0e51f57461f6a689e
+StringManipulation 0.6.1 uuid=892a3eda-7b42-436c-8928-eab12a02cf0e tree=9e3a02d73a8f0a9be04e677dbef758aab40f8bea
+StyledStrings 1.11.0 uuid=f489334b-da3d-4c2e-b8f0-e476e12c162b tree=stdlib/path
+SuiteSparse unversioned uuid=4607b0f0-06f3-5cda-b6b1-a6196a1729e9 tree=stdlib/path
+SuiteSparse_jll 7.10.1+0 uuid=bea87d4a-7f5b-5778-9afe-8cc45184846c tree=stdlib/path
+TOML 1.0.3 uuid=fa267f1f-6049-4f14-aa54-33bafae1ed76 tree=stdlib/path
+TableTraits 1.0.1 uuid=3783bdb8-4a98-5b6b-af9a-565f29a5fe9c tree=c06b2f539df1c6efa794486abfb6ed2022561a39
+Tables 1.14.0 uuid=bd369af6-aec1-5ad0-b16a-f7cc5008161c tree=a94d9bdda1b7bed0046cea645639ab3f62196fac
+TranscodingStreams 0.11.3 uuid=3bb67fe8-82b1-5028-8e26-92a6c54297fa tree=0c45878dcfdcfa8480052b6ab162cdd138781742
+UUIDs 1.11.0 uuid=cf7118a7-6976-5b1a-9a39-7adc72f591a4 tree=stdlib/path
+Unicode 1.11.0 uuid=4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5 tree=stdlib/path
+WeakRefStrings 1.4.3 uuid=ea10d353-3f73-51f8-a26c-33c1cb351aa5 tree=0716e01c3b40413de5dedbc9c5c69f27cddfddfc
+WorkerUtilities 1.6.1 uuid=76eceee3-57b5-4d4a-8e66-0e911cebbf60 tree=cd1659ba0d57b71a464a29e64dbc67cfe83d54e7
+Zlib_jll 1.3.2+0 uuid=83775a58-1f1d-513f-b197-d71354ab007a tree=stdlib/path
+libblastrampoline_jll 5.15.0+0 uuid=8e850b90-86db-534c-a0d3-1478176c7d93 tree=stdlib/path

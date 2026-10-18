@@ -1,0 +1,5 @@
+Julia 1.13.2
+result_entity_ids = [10, 20, 30]
+metadata_reference_weights = [0.5, 0.25, 0.25]
+metadata_has_entity_ids = false
+metadata_keys = (:package_version, :transform, :feature_names, :reference_weights, :effective_sample_size, :normalization, :method, :k, :novelty_quantile, :backend, :parallel, :pair_parameters, :provenance)

@@ -1,0 +1,3 @@
+Julia 1.13.2; threads=2
+density.jl SHA256=67f545b13c28e0716b6115d357ce92fa10e96aafba5a673801e101a3a9a29bca
+No package source changes. Independent oracle precision1024/2048bits; adaptive near comparisons require>128bits.

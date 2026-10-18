@@ -1,57 +1,57 @@
 # Exploratory Analysis
 
-Before fitting a typicality model it is worth looking at the marginal
-shape of each feature and — more importantly — at how strongly the
-features are correlated. The exploratory helpers operate on an
-`EntitySet` (or a `PairSet`) and return `DataFrame`s.
+Inspect feature distributions, feature selection, dependence, and nearby
+observations before fitting. These helpers return matrices or tables; they do
+not choose a reference population or validate the substantive construct.
 
-```julia
+```@example eda
 using Platypus
-
-es = EntitySet(rand(300, 6), [:f1, :f2, :f3, :f4, :f5, :f6])
-
-feature_summary(es)            # per-feature mean, std, quartiles, range
-rank_matrix(es)                # the copula-rank transform of the matrix
-pair_correlations(es)          # Spearman correlation of every feature pair
-compute_entity_statistics(es)  # per-entity mean rank, dispersion, extremeness
+es = EntitySet([0.1 0.2 0.9; 0.4 0.7 0.6; 0.8 0.5 0.2; 0.6 0.9 0.3],
+    [:a, :b, :c])
+feature_summary(es)
 ```
 
-## The redundancy check
+```@example eda
+rank_matrix(es)
+pair_correlations(es)
+compute_entity_statistics(es)
+```
 
-The ``n(n-1)/2`` pairwise typicality scores are **not** an i.i.d. sample:
-features are correlated, so pairs built from correlated features carry
-overlapping information. This matters when you summarise the pairwise
-distribution — a quantile over redundant pairs is noisier than its count
-suggests.
+`rank_matrix` returns the unweighted mid-rank matrix. `pair_correlations`
+reports Spearman correlations. `compute_entity_statistics` reports mean rank,
+rank dispersion, and marginal extremeness; these are distinct from fitted
+typicality scores.
 
-[`pair_correlations`](@ref) and [`pair_redundancy`](@ref) expose this
-directly:
+## Dependence diagnostics
 
-```julia
+```@example eda
 pairs = build_pairs(es)
-pr = pair_redundancy(pairs)    # abs_correlation and a suggested weight per pair
+diagnostic = pair_redundancy(pairs)
+@assert propertynames(diagnostic) == [:feature_a, :feature_b, :abs_correlation]
+diagnostic
 ```
 
-A pair whose two features are nearly collinear gets `weight` close to
-`0`; a pair of near-independent features gets `weight` close to `1`. The
-weights are a suggested down-weighting when aggregating — pairs that say
-the same thing should not be counted twice.
+Despite the historical name, `pair_redundancy` measures only the absolute
+correlation of the two coordinates within each pair. It does not measure
+dependence between pair-score columns, and it does not return aggregation
+weights. Undefined correlations, including constant features, remain `NaN`.
 
-## Locating an entity's neighbours
+A highly correlated pair may be especially useful for detecting a violation of
+its relationship. Automatically assigning it low weight is not justified.
+The pair scores share features and observations, even if within-pair
+correlations are small. Their IQR is descriptive variation, not inferential
+uncertainty. Evaluate sensitivity to the selected feature schema.
 
-```julia
-nearest_entities(es, 1; k=5)   # the 5 entities closest to entity 1
+## Neighbors and pair inventory
+
+```@example eda
+nearest_entities(es, 1; k=2)
+pair_table(pairs)
 ```
 
-Distance is Euclidean in the copula-rank space, so it is comparable
-across features regardless of their original units.
+`nearest_entities` takes a row index, not an entity ID. It computes Euclidean
+distance across all features in unweighted rank space; it is an exploratory
+helper, not the pair-specific LOF neighborhood. It returns up to `k` rows and
+does not have the tie-inclusive scoring contract of LOF.
 
-## Listing the pairs
-
-```julia
-pair_table(pairs)              # one row per feature pair
-```
-
-API reference: [Types](../api/types.md) (for `EntitySet` and `PairSet`),
-[Estimation API](../api/estimation.md) (for the model that consumes a
-`PairSet`).
+Plot recipes are described in [Visualization](../api/visualization.md).

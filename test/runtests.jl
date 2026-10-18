@@ -1,6 +1,9 @@
 using Platypus
 using Test
 using DataFrames
+using Random
+using LinearAlgebra
+using RecipesBase
 
 @testset "Platypus.jl" begin
 
@@ -102,7 +105,7 @@ using DataFrames
         ps = build_pairs(es)
         pr = pair_redundancy(ps)
         @test nrow(pr) == 3
-        @test all(0 .<= pr.weight .<= 1)
+        @test all(0 .<= pr.abs_correlation .<= 1)
 
         ne = nearest_entities(es, 1; k=2)
         @test nrow(ne) == 2
@@ -183,31 +186,69 @@ using DataFrames
             ps; method=:kde, weights=ReferenceWeights([1.0, 1.0]))
     end
 
-    @testset "Estimation stubs raise" begin
-        es = EntitySet([0.1 0.2; 0.3 0.4; 0.5 0.6], [:a, :b])
+    @testset "Additional implemented APIs" begin
+        rng = MersenneTwister(77)
+        es = EntitySet(rand(rng, 40, 4), [:a,:b,:c,:d])
         ps = build_pairs(es)
-        r  = fit_typicality(ps; method=:knn)
-        @test_throws ErrorException fit_graph_typicality(es)
-        @test_throws ErrorException fit_outcome(r, [1.0, 2.0, 3.0])
-        @test_throws ErrorException fit_copula(ps)
+        r = fit_typicality(ps)
+        @test fit_copula(ps).method == :gaussian_copula
+        @test fit_copula(ps;family=:beta).method == :beta_copula
+        y = 2 .+ 3 .* r.conventionality .- 4 .* r.novelty .+ 0.5 .* r.dispersion
+        out = fit_outcome(r,y)
+        @test out.coefficients ≈ [2,3,-4,0.5]
+        @test out.fitted ≈ y
+        @test out.r2 ≈ 1
+        @test_throws ArgumentError fit_outcome(r,y;predictors=(:conventionality,:atypicality))
+        @test_throws DimensionMismatch fit_outcome(r,y[1:3])
+        @test_throws ArgumentError fit_outcome(r,fill(NaN,40))
+        plots = [plot_feature_distributions(es), plot_pair_cloud(ps,1),
+                 plot_pair_cloud(ps,(:a,:b)), plot_correlation_heatmap(es),
+                 plot_pair_redundancy(ps), plot_typicality_profile(r,1),
+                 plot_typicality_profile(r,:entity_id=>1), plot_atypicality_distribution(r),
+                 plot_novelty_conventionality(r), plot_outcome_fit(out), plot_pair_heatmap(r)]
+        for p in plots
+            @test p isa TypicalityPlot
+            recipe = RecipesBase.apply_recipe(Dict{Symbol,Any}(),p)
+            @test length(recipe) == length(p.series)
+            @test all(!isempty(x.args) for x in recipe)
+        end
+        @test_throws ArgumentError plot_pair_cloud(ps,(:a,:missing))
+        @test_throws ArgumentError plot_typicality_profile(r,:entity_id=>999)
+        @test_throws ArgumentError fit_typicality(ps;normalize=false)
+        @test_throws ArgumentError fit_typicality(ps;k=-1)
+        @test_throws ArgumentError fit_typicality(ps;k=40)
+        @test_throws ArgumentError fit_typicality(ps;weights=ReferenceWeights(1:40))
+        @test_throws ArgumentError fit_typicality(build_pairs(EntitySet([1. 2.],[:a,:b])))
+        @test scoretable(r;raw=true).typicality == vec(permutedims(r.raw_scores))
+        metadata = analysis_metadata(r)
+        metadata.reference_weights[1] = 0
+        @test r.configuration.reference_weights[1] > 0
+        ps.entity_ids[1] = 100
+        @test r.entity_ids[1] == 1
     end
+end
 
-    @testset "Visualization stubs raise" begin
-        es = EntitySet([0.1 0.2 0.7;
-                        0.3 0.4 0.5;
-                        0.5 0.6 0.2;
-                        0.9 0.1 0.4], [:a, :b, :c])
-        ps = build_pairs(es)
-        r  = fit_typicality(ps; method=:lof)
+include("data_integrity.jl")
+include("neighbors.jl")
+include("density.jl")
+include("mathematical_properties.jl")
+include("graph.jl")
+include("workflow.jl")
+include("numerical_limits.jl")
+include("visualization.jl")
+include("numerical_depth.jl")
+include("numerical_density.jl")
+include("numerical_neighbors.jl")
+include("numerical_precision.jl")
+include("numerical_contracts.jl")
 
-        @test_throws ErrorException plot_feature_distributions(es)
-        @test_throws ErrorException plot_pair_cloud(ps, 1)
-        @test_throws ErrorException plot_correlation_heatmap(es)
-        @test_throws ErrorException plot_pair_redundancy(ps)
-        @test_throws ErrorException plot_typicality_profile(r, 1)
-        @test_throws ErrorException plot_atypicality_distribution(r)
-        @test_throws ErrorException plot_novelty_conventionality(r)
-        @test_throws ErrorException plot_outcome_fit(nothing)
-        @test_throws ErrorException plot_pair_heatmap(r)
+@testset "Serial and threaded pair scoring agree" begin
+    X = [sin(i*j)+i/20 for i in 1:40,j in 1:4]
+    ps = build_pairs(EntitySet(X,[:a,:b,:c,:d]))
+    for method in TYPICALITY_METHODS
+        serial = fit_typicality(ps;method=method)
+        parallel = fit_typicality(ps;method=method,parallel=true)
+        @test serial.raw_scores == parallel.raw_scores
+        @test serial.pair_scores == parallel.pair_scores
     end
 end

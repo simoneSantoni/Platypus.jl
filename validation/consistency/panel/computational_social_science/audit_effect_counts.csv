@@ -1,0 +1,9 @@
+method,flags,pair_output_exceeds_tolerance,some_summary_exceeds_tolerance
+beta,6,6,6
+depth,192,192,192
+gaussian,82,82,81
+gaussian_regularized,131,131,130
+graph,39,36,36
+kde,82,64,64
+knn,51,49,49
+lof,47,45,45

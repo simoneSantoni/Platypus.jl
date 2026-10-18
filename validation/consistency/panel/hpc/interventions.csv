@@ -1,0 +1,4 @@
+intervention,membership_changes,edge_changes,max_mass_delta,max_typicality_delta
+integer_feature_reversal,1,1,0.020025433368322146,0.125
+grid_row_permutation,104,32,0.0028561189599899638,0.25
+grid_frozen_row_permutation,0,0,0.0,0.0

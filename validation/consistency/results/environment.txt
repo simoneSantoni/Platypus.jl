@@ -1,0 +1,6 @@
+Julia 1.13.2; Platypus 0.2.0; threads=2
+Seeds: 17, 101, 2026; raw relative tolerance=1.0e-10; score absolute tolerance=1.0e-10
+Raw error denominator=max(1,abs(before),abs(after)); equal signed infinities match.
+No rank recovery threshold is treated as a correctness oracle; k sensitivity is descriptive.
+Source SHA256: 65d1035289eda64caf3bd7de0294801e2b1859e6315e70a65e4aacf8a6f4cdcc
+Baseline errors are expected only for documented beta ties or Gaussian singular/constant fits.

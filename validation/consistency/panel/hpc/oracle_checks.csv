@@ -1,0 +1,14 @@
+fixture,transform,n,p,k,directed_membership_errors,directed_missing,directed_extra,undirected_edge_errors,max_affinity_error,max_mass_error,backend_membership_errors,backend_mass_error
+five_ranks_original,rank,5,2,2,2,2,0,0,2.220446049250313e-16,5.551115123125783e-17,0,0.0
+five_ranks_reflected,rank,5,2,2,1,1,0,0,1.1102230246251565e-16,5.551115123125783e-17,0,0.0
+five_ranks_integer_intervention,none,5,2,2,0,0,0,0,1.1102230246251565e-16,5.551115123125783e-17,0,0.0
+integer_feature_original,none,8,3,2,1,1,0,1,0.2149365889287328,0.020025433368322146,0,0.0
+integer_feature_reversed,none,8,3,2,0,0,0,0,1.1102230246251565e-16,2.7755575615628914e-17,0,0.0
+grid_original,zscore,64,3,8,104,104,0,32,0.36787944117144233,0.0028561189599899638,0,0.0
+grid_permuted,zscore,64,3,8,0,0,0,0,1.1102230246251565e-16,3.469446951953614e-18,0,0.0
+grid_rank_intervention,rank,64,3,8,0,0,0,0,5.551115123125783e-17,3.469446951953614e-18,0,0.0
+grid_integer_intervention,none,64,3,8,0,0,0,0,5.551115123125783e-17,3.469446951953614e-18,0,0.0
+grid_integer_zscore,zscore,64,3,8,4,4,0,4,0.24311673443421422,0.0006073918295536121,0,0.0
+grid_integer_zscore_permuted,zscore,64,3,8,4,4,0,4,0.24311673443421422,0.0006073918295536121,0,0.0
+grid_frozen_geometry,none,64,3,8,80,0,80,32,0.3678794411714422,0.0011510090531232017,0,0.0
+grid_frozen_geometry_permuted,none,64,3,8,80,0,80,32,0.3678794411714422,0.0011510090531232017,0,0.0

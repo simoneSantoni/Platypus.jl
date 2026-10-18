@@ -1,0 +1,7 @@
+case,n,interpretation,changed_entities,max_headline_delta,strict_order_reversals,computed_ties_split,computed_ties_created,selected_before,selected_after,cutoff_switches
+lof_rank_reflection,5,same distance geometry; numerical inconsistency,0,0.0,0,0,0,1,1,0
+graph_feature_order,8,same Euclidean feature geometry; numerical inconsistency,0,0.0,0,0,0,2,2,0
+gaussian_zero_weight_append,25,unchanged positive reference mass; numerical inconsistency,0,0.0,0,0,0,0,0,0
+gaussian_positive_weight_append,25,"changed empirical reference; descriptive sensitivity, not invariant",25,0.4814814814814815,0,297,0,0,7,7
+depth_exact_triangle_tie,3,exact equal-depth oracle versus computed output,0,0.0,0,0,0,0,0,0
+kde_exact_constant_tie,3,exact constant-support oracle versus computed output,0,0.0,0,0,0,0,0,0

@@ -1,0 +1,4 @@
+seed,method,target,row_permutation_max_error,row_permutation_spearman,irrelevant_feature_spearman
+101,self_tuning_graph,full_feature_connectivity,0.0,1.0,0.11324270479315598
+202,self_tuning_graph,full_feature_connectivity,0.0,1.0,0.16096038907769836
+303,self_tuning_graph,full_feature_connectivity,0.0,1.0,0.1133921246923708

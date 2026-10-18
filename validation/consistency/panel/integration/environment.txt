@@ -1,0 +1,6 @@
+Julia 1.13.2; two Julia threads. Existing suite: 911/911 passed.
+Command: JULIA_DEPOT_PATH=/tmp/platypus-review-julia-depot:/home/simon/.julia julia --threads=2 --startup-file=no --project=. test/runtests.jl
+First attempt passed assertions but logged read-only extension-cache errors; repeated with writable temporary depot, no errors.
+Source SHA256: 65d1035289eda64caf3bd7de0294801e2b1859e6315e70a65e4aacf8a6f4cdcc
+Source unchanged from the simulation audit.
+Triage is based on raw-relative tolerance 1e-10; small raw differences do not prove mathematical equality.

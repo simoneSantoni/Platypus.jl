@@ -1,0 +1,7 @@
+Julia 1.10.12; Platypus 0.2.0
+Seeds: 101, 202, 303; Threads: 1
+CPU: goldmont; architecture: x86_64
+n=160; anomalies=12; rank transform; default k and bandwidth; no tuning
+Negative controls and higher-order cases are retained regardless of performance.
+Scores are evaluated within each endogenous collection; no held-out prediction claim.
+Times exclude one warm-up per method but are not a controlled HPC benchmark.

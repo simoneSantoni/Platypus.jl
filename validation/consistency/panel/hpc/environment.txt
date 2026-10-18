@@ -1,0 +1,3 @@
+Julia 1.13.2; threads=2; seed=20261018
+Exact Rational{BigInt} squared distances; 256-bit BigFloat affinities.
+No source estimator edits; oracle is quadratic and intended only for small fixtures.

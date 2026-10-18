@@ -1,0 +1,9 @@
+method,checks,before_violations,after_violations,before_unexpected_errors,after_unexpected_errors,resolved_flags,new_flags
+beta,420,6,0,0,0,6,0
+depth,3033,192,0,0,0,192,0
+gaussian,462,82,0,0,0,82,0
+gaussian_regularized,858,131,0,0,0,131,0
+graph,2277,39,0,0,0,39,0
+kde,3033,82,0,0,0,82,0
+knn,2277,51,0,0,0,51,0
+lof,2277,47,0,0,0,47,0

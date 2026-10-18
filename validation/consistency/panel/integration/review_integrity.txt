@@ -1,0 +1,6 @@
+Seven specialist reports and their local links verified.
+Source fingerprint matches original audit: 65d1035289eda64caf3bd7de0294801e2b1859e6315e70a65e4aacf8a6f4cdcc
+630 flags: 525 raw-within-tolerance, 105 raw-above-tolerance; 603 affect a summary.
+91 feature-order interventions: original violations retained; prototype differences zero.
+Existing suite: 911/911 passed in retained clean log.
+This verifies review artifacts and counts, not resolution of package defects.

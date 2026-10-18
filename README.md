@@ -1,227 +1,210 @@
 # Platypus.jl
 
-[![Atypicality Analysis](https://img.shields.io/badge/Atypicality-Analysis-orange.svg)](https://github.com/simoneSantoni/Platypus.jl)
-[![Build Status](https://github.com/simoneSantoni/Platypus.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/simoneSantoni/Platypus.jl/actions/workflows/CI.yml?query=branch%3Amain)
-[![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://simoneSantoni.github.io/Platypus.jl/stable/)
-[![Documentation](https://img.shields.io/badge/docs-dev-blue.svg)](https://simoneSantoni.github.io/Platypus.jl/dev/)
-[![Julia](https://img.shields.io/badge/Julia-1.9+-purple.svg)](https://julialang.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://github.com/simoneSantoni/Platypus.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/simoneSantoni/Platypus.jl/actions/workflows/CI.yml)
+[![Documentation](https://img.shields.io/badge/docs-development-blue.svg)](https://simoneSantoni.github.io/Platypus.jl/dev/)
+[![Julia](https://img.shields.io/badge/Julia-default_1.13.2-purple.svg)](https://julialang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 <p align="center">
   <img src="docs/src/assets/logo.png" alt="Platypus.jl icon" width="160">
 </p>
 
-A Julia package for measuring **entity atypicality** in large, heterogeneous sets — and, in particular, in sets whose reference population has no clean boundary.
+Platypus.jl computes **descriptive atypicality relative to a chosen collection**.
+It scores two-feature projections with neighborhood, density, depth, or copula
+methods and summarizes the scores for each entity. A separate graph estimator
+measures connectivity using all selected features together.
 
-## Overview
+The pairwise design is inspired by research on atypical combinations. Scores
+depend on the selected features, reference collection, and method; they are not
+anomaly probabilities, significance tests, or validated measures of human
+judgments of novelty.
 
-How atypical is one entity relative to its peers — a song in a market with fuzzy genre boundaries, a firm in a loosely defined industry, a paper in a sprawling literature? Platypus.jl answers this by decomposing each entity into the `n(n-1)/2` *pairs* of its features and scoring the local typicality of each pairwise combination, following the design of Uzzi et al. (2013), *Atypical Combinations and Scientific Impact*. The package provides tools for:
+## Status and installation
 
-- **Data organization**: ingesting entity records and projecting them onto feature pairs
-- **Descriptive analysis**: feature summaries, correlation/redundancy diagnostics, nearest neighbours
-- **Visualization**: feature distributions, pair clouds, typicality profiles
-- **Estimation**: pairwise local-density atypicality with conventionality / novelty / dispersion summaries
-- **Inference visualization**: atypicality distributions, the novelty–conventionality plane, outcome fits
+The working tree targets **0.2.0**. Core scoring, copula models, graph scoring,
+descriptive outcome regression, diagnostics, and plotting recipes are implemented.
+This does not imply that a 0.2.0 release tag has been published.
+See [CHANGELOG.md](CHANGELOG.md) for changes from 0.1.
 
-When the reference set is fuzzy, Platypus.jl makes the reference *endogenous* (the collection is its own reference) and *local* (typicality is scored against local density, not a global baseline).
+The final 84-dataset numerical audit passed **14,637 checks with zero violations
+and zero unexpected comparison errors**; the baseline also had zero unexpected
+errors. The package suite passed 3,701/3,701 assertions, the independent
+mathematical comparator checks 976/976, and the sociology checks 33/33.
+Real-coordinate KDE now exposes a separate normalization ordering; the audit
+checks its weighted mid-CDF contract explicitly. These results validate the
+specified scenarios, not every possible input. See the
+[numerical repair report](docs/research/numerical_repair.md) for evidence,
+contract changes, preserved failures, and numerical limits.
 
-## Installation
+The default development runtime is **Julia 1.13.2**, recorded in `.julia-version`
+and pinned in CI and documentation builds. Julia 1.9 remains the minimum
+supported version. From a checkout, configure Juliaup once:
+
+```sh
+juliaup add 1.13.2
+juliaup override set "$(cat .julia-version)"
+julia --version
+```
+
+The directory override makes `julia` select 1.13.2 in this checkout and its
+subdirectories. On another checkout, repeat the setup, or use `julia +1.13.2`
+explicitly. `.julia-version` records the choice; Juliaup needs the override command.
+
+Install the development revision in a Julia project environment:
 
 ```julia
 using Pkg
 Pkg.add(url="https://github.com/simoneSantoni/Platypus.jl")
 ```
 
-## Features
+For research, retain the project's `Project.toml` and `Manifest.toml`, including
+the resolved package commit. An unpinned repository installation follows the
+revision available when installed. Record the dataset version and configuration.
 
-### 1. Data Organization
+## Reproducible example
 
-Functions for ingesting entity records and projecting them onto feature pairs.
-
-```julia
-load_entities(df)                    # Load entities from a DataFrame
-load_entities("entities.csv")        # Load from CSV file
-EntitySet(matrix, feature_names)     # Collection of entities sharing a schema
-build_pairs(es; transform=:rank)     # Project onto all n(n-1)/2 feature pairs
-ReferenceWeights(weights)            # Graded membership in the reference set
-```
-
-### 2. Exploratory Data Analysis
-
-Summary statistics over features, pairs, and entities.
-
-```julia
-feature_summary(es)                  # Per-feature descriptive statistics
-rank_matrix(es)                      # Copula-rank transform of the data matrix
-pair_correlations(es)                # Spearman correlation of every feature pair
-pair_redundancy(ps)                  # Per-pair redundancy weights
-nearest_entities(es, idx; k=5)       # Nearest neighbours of an entity
-compute_entity_statistics(es)        # Per-entity descriptive statistics
-```
-
-### 3. Descriptive Visualization
-
-Plot recipes for features and feature-pair structure.
-
-```julia
-plot_feature_distributions(es)       # Marginal distribution of each feature
-plot_pair_cloud(ps, pair)            # Scatter of one feature pair's cloud
-plot_correlation_heatmap(es)         # Heatmap of feature correlations
-plot_pair_redundancy(ps)             # Per-pair redundancy diagnostic
-plot_typicality_profile(result, e)   # One entity's pairwise score distribution
-```
-
-### 4. Estimation
-
-Statistical models for entity atypicality.
-
-```julia
-fit_typicality(ps; method=:lof)      # Pairwise local-density atypicality
-fit_graph_typicality(es)             # Endogenous graph random-walk typicality
-fit_outcome(result, y)               # Regression of an outcome on the summaries
-fit_copula(ps)                       # Parametric copula-density typicality
-```
-
-### 5. Visualization of Estimation Outcomes
-
-Plot recipes for fitted models.
-
-```julia
-plot_atypicality_distribution(result)  # Histogram of per-entity atypicality
-plot_novelty_conventionality(result)   # The Uzzi novelty–conventionality plane
-plot_outcome_fit(result)               # Fitted vs. observed outcome
-plot_pair_heatmap(result)              # Entity × feature-pair typicality heatmap
-```
-
-## Usage
-
-### Basic Example
+Here 39 entities follow a diagonal relationship across three features. Entity 40
+violates two of the three pairwise relationships.
 
 ```julia
 using Platypus
 
-# An n_entities × n_features matrix of continuous features
-es = EntitySet(rand(500, 8),
-               [:danceability, :energy, :acousticness, :valence,
-                :tempo, :loudness, :speechiness, :liveness])
+x = collect(range(0.1, 0.9; length=39))
+M = vcat(hcat(x, x, x), [0.95 0.05 0.95])
+es = EntitySet(M, [:f1, :f2, :f3])
+pairs = build_pairs(es; transform=:rank)
+result = fit_typicality(pairs; method=:lof,
+    provenance=(dataset="synthetic-diagonal-v1",))
 
-# Project onto all 8*7/2 = 28 feature pairs (copula-rank transform)
-pairs = build_pairs(es)
-
-# Score local typicality on each pair and aggregate per entity
-result = fit_typicality(pairs; method=:lof)
-
-# View results
-println(result)
+@assert argmax(atypicality(result)) == 40
+summarytable(result)
+scoretable(result)             # normalized scores
+scoretable(result; raw=true)   # method-specific scores
+scoretable(result; normalization=true) # values used to order percentile groups
+analysis_metadata(result)     # save alongside exported tables
 ```
 
-### Result Structure
+This constructed example demonstrates the workflow, not general detection
+performance. The [executed tutorial](docs/src/getting_started.md) explains the
+output and data-loading choices.
 
-`fit_typicality` returns a `TypicalityResult` with:
+## Score interpretation
 
-- `pair_scores::Matrix{Float64}`: `n_entities × n_pairs` local typicality scores
-- `conventionality::Vector{Float64}`: Median pairwise typicality, per entity
-- `novelty::Vector{Float64}`: Lower-tail (10th percentile) score, per entity
-- `dispersion::Vector{Float64}`: Inter-quartile range of pairwise scores
-- `atypicality::Vector{Float64}`: `1 .- conventionality`
-- `method::Symbol`: Scoring rule used
-- `n_entities::Int`, `n_pairs::Int`: Problem dimensions
+| Output | Meaning | Direction |
+| --- | --- | --- |
+| `pair_scores` | Reference-weighted mid-percentiles of `normalization_scores` | Higher = more typical |
+| `raw_scores` | Method-specific values, including physical log densities | Higher = more typical |
+| `normalization_scores` | Raw values except real-coordinate KDE's ordinal ordering labels | Only order and ties matter |
+| `conventionality` | Median over feature pairs | Higher = more typical |
+| `novelty` | Lower quantile over feature pairs, default 0.1 | **Lower = more unusual** |
+| `dispersion` | IQR over feature pairs | Greater variation across pairs |
+| `atypicality` | `1 - conventionality` | Higher = more atypical |
 
-```julia
-# Access results
-atypicality(result)        # Headline per-entity atypicality
-conventionality(result)    # Median pairwise typicality
-novelty(result)            # Lower-tail novelty
-summarytable(result)       # Per-entity summary as DataFrame
-scoretable(result)         # Long-form entity × feature-pair table
-```
+`novelty` denotes lower-tail typicality, not historical newness or the minimum
+pair score. Dispersion is not sampling uncertainty. Equal normalization values
+share their reference-mass midpoint; if all are equal, every percentile is 0.5.
 
-### Loading Data
+For Gaussian KDE on `:none` or `:zscore` coordinates, physical `raw_scores`
+remain log densities. Percentiles instead use ordinal labels of dimensionless
+kernel masses in `normalization_scores`. These labels have no density units or
+comparable magnitudes across pairs/fits. Two rounded raw log densities can tie
+while the ordering labels distinguish them, producing different percentiles.
+Other methods, including rank-space KDE, use raw values for normalization.
+`analysis_metadata(result).normalization_basis` records this choice.
+
+Summaries always use normalized `pair_scores`; `normalize=false` is rejected.
+No blanket tolerance merges nearby values. Underflow-affected KDE rows are
+recomputed with a shift of the unweighted kernel exponents, retaining original
+reference-weight ratios exactly, and compared using adaptive directed bounds.
+These comparisons certify the represented expressions, not the exact original
+Gaussian mixture; shifted terms can still round or underflow.
+
+## Methods
+
+| Entry point | Raw quantity | Nonuniform reference weights |
+| --- | --- | --- |
+| `fit_typicality(pairs; method=:lof)` | Reciprocal tie-inclusive LOF | Rejected |
+| `method=:knn` | Negative kth-neighbor distance | Rejected |
+| `method=:kde` | Log kernel density; reflected bounded kernels on ranks | Supported |
+| `method=:depth` | Global Mahalanobis centrality | Supported |
+| `fit_copula(pairs; family=:gaussian)` | Log Gaussian copula density | Supported |
+| `fit_copula(pairs; family=:beta)` | Log empirical beta copula density | Uniform positive only; untied margins |
+| `fit_graph_typicality(es)` | Stationary mass on a full-feature graph | Rejected |
+| `fit_outcome(result, y)` | Descriptive least-squares association | Not a reference-weighting interface |
+
+Supported weighted estimators apply `ReferenceWeights(w)` to transformations,
+reference fitting, and score normalization. Zero-weight rows remain queries.
+Labels are descriptive and never select peers automatically. Selecting a
+collection still requires a substantive decision.
+
+LOF/kNN and graph scoring use filtered exact squared-distance decisions: a
+floating interval filter certifies clear comparisons, and rational arithmetic
+resolves uncertain ones. Both requested backends, `:kdtree` and `:brute`,
+currently use a conservative scan; no KD-tree pruning accelerator is active.
+Candidate work is quadratic. There is no dense distance matrix, but ties can
+make the graph dense. Metadata distinguishes requested and effective backends.
+
+Depth uses exact rational two-dimensional moments, algebraic rank, and strict
+affine support. Omit the retired `depth_rtol` argument; numeric values now raise
+an error. Original represented reference weights and exact rank provenance are
+retained through the relevant calculations. See the
+[method guide](docs/src/guide/estimation.md) for geometry and precision limits.
+
+`parallel=true` distributes typicality feature pairs across Julia threads.
+Exact arithmetic adds allocation and integer-bit costs; KDE and empirical beta
+copulas also require all-pairs work. The three retained Float64 score matrices
+alone require approximately `24*N*P` bytes, where `P = p*(p-1)/2`. Benchmark the
+complete workload.
+
+## Data and visualization
+
+Select measurement features explicitly to avoid including an outcome, timestamp,
+or unrelated numeric covariate:
 
 ```julia
 using DataFrames
-
-# From DataFrame — numeric columns become features
-df = DataFrame(
-    id           = [1, 2, 3],
-    genre        = ["jazz", "rock", "pop"],
-    danceability = [0.31, 0.74, 0.66],
-    acousticness = [0.88, 0.12, 0.40],
-)
-es = load_entities(df; id_col=:id, label_col=:genre)
-
-# From CSV file
-es = load_entities("entities.csv"; id_col=:id)
+df = DataFrame(id=1:3, genre=["jazz", "rock", "pop"],
+               energy=[0.2, 0.9, 0.7], acousticness=[0.9, 0.1, 0.4],
+               popularity=[30, 80, 50])
+es = load_entities(df; id_col=:id, label_col=:genre,
+                   feature_cols=[:energy, :acousticness])
 ```
 
-### Graded Reference Membership
+IDs and feature names must be unique. Missing and nonfinite features are rejected.
+`EntitySet.matrix` is authoritative; entity accessors are snapshots. Rebuild
+pairs after editing features. Validation requires every unordered feature pair
+exactly once. For pairwise fits, save metadata's ordered `entity_ids` with both
+normalized `reference_weights` and original `source_reference_weights`; this preserves
+their association when exported score tables are sorted or joined.
 
-When the reference set has a fuzzy boundary, weight each entity's contribution.
+All nine `plot_*` functions return `TypicalityPlot` recipes with detached data.
+Install Plots separately to render them:
 
 ```julia
-# One non-negative weight per entity (e.g. by recency or genre proximity)
-w = ReferenceWeights(weights)
-
-# Honoured by the :kde and :depth methods
-fit_typicality(pairs; method=:kde, weights=w)
+using Plots
+plot(plot_novelty_conventionality(result))
+plot(plot_typicality_profile(result, :entity_id => 40))
 ```
 
-### Scoring Methods
+Platypus depends on RecipesBase and does not choose a plotting backend.
 
-```julia
-fit_typicality(pairs; method=:knn)     # k-th nearest-neighbour density
-fit_typicality(pairs; method=:lof)     # Local Outlier Factor (default)
-fit_typicality(pairs; method=:kde)     # Gaussian kernel density
-fit_typicality(pairs; method=:depth)   # Mahalanobis data depth
+## Documentation and validation
+
+- [Getting started](docs/src/getting_started.md)
+- [Methods and assumptions](docs/src/guide/estimation.md)
+- [Research workflow](docs/src/guide/research_workflow.md)
+- [Algorithm research and decision records](docs/research/README.md)
+- [References](docs/src/references.md)
+- [Development documentation](https://simoneSantoni.github.io/Platypus.jl/dev/)
+
+From a checkout:
+
+```sh
+julia --project -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
 ```
 
-## Utility Functions
+Numerical tests and synthetic validation evaluate implementation properties and
+specified scenarios. Human-perception validation is outside this development
+phase. No causal or historical interpretation follows from a descriptive fit.
 
-```julia
-# EntitySet accessors
-n_entities(es)                       # Number of entities
-n_features(es)                       # Number of features
-feature_names(es)                    # Feature names
-
-# PairSet accessors
-n_pairs(ps)                          # Number of feature pairs
-
-# Entity accessors
-features(entity)                     # Feature vector
-label(entity)                        # Category label (or nothing)
-```
-
-## Running Tests
-
-```julia
-include("test/runtests.jl")
-```
-
-## Documentation
-
-For more detailed documentation, see:
-
-- [Stable Documentation](https://simoneSantoni.github.io/Platypus.jl/stable/)
-- [Development Documentation](https://simoneSantoni.github.io/Platypus.jl/dev/)
-
-## References
-
-1. Uzzi, B., Mukherjee, S., Stringer, M., & Jones, B. (2013). Atypical combinations and scientific impact. *Science*, 342(6157), 468–472.
-
-2. Askin, N., & Mauskapf, M. (2017). What makes popular culture popular? Product features and optimal differentiation in music. *American Sociological Review*, 82(5), 910–944.
-
-3. Breunig, M.M., Kriegel, H.-P., Ng, R.T., & Sander, J. (2000). LOF: Identifying density-based local outliers. *Proceedings of ACM SIGMOD 2000*, 93–104.
-
-4. Rosch, E., & Mervis, C.B. (1975). Family resemblances: Studies in the internal structure of categories. *Cognitive Psychology*, 7(4), 573–605.
-
-5. Hsu, G., Hannan, M.T., & Koçak, Ö. (2009). Multiple category memberships in markets. *American Sociological Review*, 74(1), 150–166.
-
-6. Zuo, Y., & Serfling, R. (2000). General notions of statistical depth function. *The Annals of Statistics*, 28(2), 461–482.
-
-7. Sklar, A. (1959). Fonctions de répartition à n dimensions et leurs marges. *Publications de l'Institut de Statistique de l'Université de Paris*, 8, 229–231.
-
-8. Lovász, L. (1993). Random walks on graphs: A survey. *Combinatorics, Paul Erdős is Eighty*, 2, 1–46.
-
-## License
-
-MIT License — see [LICENSE](LICENSE) for details.
+MIT License; see [LICENSE](LICENSE).

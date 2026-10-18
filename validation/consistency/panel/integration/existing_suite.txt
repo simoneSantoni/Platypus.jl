@@ -1,0 +1,20 @@
+Test Summary: | Pass  Total  Time
+Platypus.jl   |  148    148  8.2s
+Test Summary:                              | Pass  Total  Time
+Data integrity and reference preprocessing |   60     60  0.4s
+Test Summary:          | Pass  Total  Time
+Exact neighbor kernels |  150    150  0.3s
+Test Summary:                                 | Pass  Total  Time
+Weighted density and copula numerical oracles |  133    133  1.0s
+Test Summary:                                | Pass  Total  Time
+Mathematical properties of public estimators |  137    137  2.1s
+Test Summary:            | Pass  Total  Time
+Full-feature exact graph |  219    219  2.5s
+Test Summary:                                                | Pass  Total  Time
+Research workflow: feature selection, provenance and cohorts |   15     15  0.7s
+Test Summary:           | Pass  Total  Time
+Finite numerical limits |   28     28  1.0s
+Test Summary:                                  | Pass  Total  Time
+Plot labels, overlays and numerical color keys |   13     13  0.0s
+Test Summary:                          | Pass  Total  Time
+Serial and threaded pair scoring agree |    8      8  0.0s

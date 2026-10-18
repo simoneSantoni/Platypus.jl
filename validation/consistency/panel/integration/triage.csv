@@ -1,0 +1,9 @@
+method,total_flags,raw_within_audit_tolerance,raw_exceeds_audit_tolerance
+beta,6,6,0
+depth,192,181,11
+gaussian,82,82,0
+gaussian_regularized,131,131,0
+graph,39,9,30
+kde,82,63,19
+knn,51,48,3
+lof,47,5,42

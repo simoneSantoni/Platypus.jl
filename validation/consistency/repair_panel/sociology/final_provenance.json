@@ -1,0 +1,12 @@
+{
+  "source_sha256": "a60109d4a70036f7b7474d7a410e105b17f182f869b218332a45e5a0acb05f8c",
+  "julia_version": "1.13.2",
+  "threads": 2,
+  "acceptance_checks_passed": 33,
+  "contract_checks_passed": 130,
+  "contract_execution": "Included in complete package_tests.log: 3701 assertions passed",
+  "commands": [
+    "julia --threads=2 --startup-file=no --project=. validation/consistency/repair_panel/sociology/acceptance.jl",
+    "julia --threads=2 --startup-file=no --project=. test/runtests.jl"
+  ]
+}

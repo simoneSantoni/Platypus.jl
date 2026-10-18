@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use Platypus.jl in your research, please cite it as below and report the version and source revision used."
+type: software
+title: "Platypus.jl: Descriptive Atypicality in Julia"
+abstract: >-
+  A Julia package for descriptive entity atypicality relative to a supplied
+  reference collection, with pairwise neighborhood, density, depth and copula
+  estimators and a separate full-feature graph estimator.
+authors:
+  - family-names: Santoni
+    given-names: Simone
+    website: "https://www.bayes.citystgeorges.ac.uk/faculties-and-research/experts/simone-santoni"
+version: 0.2.0
+repository-code: "https://github.com/simoneSantoni/Platypus.jl"
+url: "https://simoneSantoni.github.io/Platypus.jl/dev/"
+license: MIT
+keywords:
+  - atypicality
+  - computational social science
+  - density estimation
+  - Julia

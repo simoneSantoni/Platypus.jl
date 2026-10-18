@@ -1,9 +1,11 @@
 [deps]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Platypus = "b6f3a2e4-9c1d-4e7a-8f2b-3d5c6a7e8f90"
 
 [sources]
-Platypus = {path = "/home/simon/githubRepos/Platypus.jl"}
+Platypus = {path = ".."}
 
 [compat]
+DataFrames = "1"
 Documenter = "1"

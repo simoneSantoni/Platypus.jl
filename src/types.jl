@@ -40,7 +40,8 @@ struct Entity
     function Entity(id::Int, features::Vector{Float64}, label::Union{String, Nothing})
         isempty(features) &&
             throw(ArgumentError("an Entity must have at least one feature"))
-        new(id, features, label)
+        all(isfinite, features) || throw(ArgumentError("feature values must be finite"))
+        new(id, copy(features), label)
     end
 end
 
@@ -53,9 +54,9 @@ end
 """
     features(e::Entity) -> Vector{Float64}
 
-Feature vector of the entity.
+Detached copy of the entity feature vector.
 """
-features(e::Entity) = e.features
+features(e::Entity) = copy(e.features)
 
 """
     label(e::Entity) -> Union{String, Nothing}
@@ -76,20 +77,24 @@ A collection of [`Entity`](@ref) records sharing one feature schema.
 
 An `EntitySet` is the unit of analysis *and* the reference set: when the
 boundary of the population is fuzzy or unknown, every estimator in
-Platypus.jl scores an entity relative to the other members of the same
+Platypus.jl scores an entity relative to the supplied members of the same
 `EntitySet` (optionally re-weighted by [`ReferenceWeights`](@ref)).
 
 # Fields
-- `entities::Vector{Entity}`: The entities
+- `entities::Vector{Entity}`: Detached entity snapshots (a computed property)
 - `feature_names::Vector{Symbol}`: Names of the features, in column order
-- `matrix::Matrix{Float64}`: Cached `n_entities × n_features` value matrix
+- `matrix::Matrix{Float64}`: Authoritative `n_entities × n_features` value matrix
 - `entity_ids::Vector{Int}`: Entity IDs, in row order
 - `labels::Vector{Union{String, Nothing}}`: Entity labels, in row order
 - `n_entities::Int`: Number of entities
 - `n_features::Int`: Number of features
+
+`matrix` is the authoritative value store. Constructors copy input data;
+indexing, iteration, and the `entities` property return detached `Entity`
+snapshots. Edit `matrix` explicitly to update a collection, then rebuild its
+pairs. Analysis functions validate direct field edits before using them.
 """
 struct EntitySet
-    entities::Vector{Entity}
     feature_names::Vector{Symbol}
     matrix::Matrix{Float64}
     entity_ids::Vector{Int}
@@ -107,6 +112,7 @@ struct EntitySet
                 "entity $(e.id) has $(length(e.features)) features, " *
                 "but $p feature names were given"))
         end
+        allunique(feature_names) || throw(ArgumentError("feature names must be unique"))
         n = length(entities)
         M = Matrix{Float64}(undef, n, p)
         for (i, e) in enumerate(entities)
@@ -114,7 +120,9 @@ struct EntitySet
         end
         ids = Int[e.id for e in entities]
         labs = Union{String, Nothing}[e.label for e in entities]
-        new(entities, feature_names, M, ids, labs, n, p)
+        allunique(ids) || throw(ArgumentError("entity IDs must be unique"))
+        all(isfinite, M) || throw(ArgumentError("feature values must be finite"))
+        new(copy(feature_names), M, ids, labs, n, p)
     end
 end
 
@@ -132,6 +140,8 @@ function EntitySet(matrix::AbstractMatrix{<:Real}, feature_names::AbstractVector
         "matrix has $p columns but $(length(feature_names)) feature names were given"))
     idv = ids === nothing ? collect(1:n) : collect(Int.(ids))
     labv = labels === nothing ? fill(nothing, n) : labels
+    length(idv) == n || throw(DimensionMismatch("ids must have one entry per row"))
+    length(labv) == n || throw(DimensionMismatch("labels must have one entry per row"))
     ents = Entity[]
     for i in 1:n
         lab = labv[i]
@@ -143,9 +153,31 @@ end
 
 Base.length(es::EntitySet) = es.n_entities
 Base.iterate(es::EntitySet, state=1) =
-    state > es.n_entities ? nothing : (es.entities[state], state + 1)
-Base.getindex(es::EntitySet, i) = es.entities[i]
+    state > es.n_entities ? nothing : (es[state], state + 1)
+Base.getindex(es::EntitySet, i::Integer) = Entity(es.entity_ids[i], es.matrix[i, :], es.labels[i])
+Base.getindex(es::EntitySet, ::Colon) = [es[i] for i in 1:es.n_entities]
+Base.getindex(es::EntitySet, indices) = [es[i] for i in (1:es.n_entities)[indices]]
+Base.eltype(::Type{EntitySet}) = Entity
+function Base.getproperty(es::EntitySet, name::Symbol)
+    name === :entities && return [es[i] for i in 1:es.n_entities]
+    return getfield(es, name)
+end
+Base.propertynames(::EntitySet, private::Bool=false) =
+    (:entities, :feature_names, :matrix, :entity_ids, :labels, :n_entities, :n_features)
 Base.lastindex(es::EntitySet) = es.n_entities
+
+# Direct field arrays may be edited by advanced callers; every analysis entry
+# point validates them. Entity indexing/accessors return detached snapshots.
+function _validate_entityset(es::EntitySet)
+    size(es.matrix) == (es.n_entities, es.n_features) || throw(DimensionMismatch("entity matrix dimensions changed"))
+    length(es.feature_names) == es.n_features || throw(DimensionMismatch("feature schema length changed"))
+    length(es.entity_ids) == es.n_entities || throw(DimensionMismatch("entity ID length changed"))
+    length(es.labels) == es.n_entities || throw(DimensionMismatch("entity label length changed"))
+    allunique(es.entity_ids) || throw(ArgumentError("entity IDs must be unique"))
+    allunique(es.feature_names) || throw(ArgumentError("feature names must be unique"))
+    all(isfinite, es.matrix) || throw(ArgumentError("feature values must be finite"))
+    return es
+end
 
 function Base.show(io::IO, es::EntitySet)
     print(io, "EntitySet($(es.n_entities) entities × $(es.n_features) features)")
@@ -157,9 +189,9 @@ end
 The projection of an [`EntitySet`](@ref) onto two of its features.
 
 Each entity contributes one point `(u, v)` to a two-dimensional cloud.
-By default the coordinates are *copula ranks* (each feature replaced by
-its rank, rescaled to `(0, 1)`) so that marginal rarity is removed and
-only the *joint* configuration of the two features carries information —
+By default the coordinates are empirical midranks in `(0, 1)`, removing
+measurement units while preserving marginal order and ties. How boundaries
+and dependence affect typicality depends on the scoring method —
 see [`build_pairs`](@ref).
 
 # Fields
@@ -195,6 +227,14 @@ consumes.
 - `labels::Vector{Union{String, Nothing}}`: Entity labels, in row order
 - `n_entities::Int`: Number of entities
 - `n_pairs::Int`: Number of feature pairs
+- `transform::Symbol`: Preprocessing used by `build_pairs`, or `:unknown`
+- `source_matrix::Union{Nothing, Matrix{Float64}}`: Detached raw features,
+  allowing reference weights to be applied before preprocessing at fit time
+
+Fitting validates that every unordered feature pair occurs exactly once;
+the order of the pairs is unrestricted. Known transforms require source
+provenance. Direct field edits are validated before analysis, but concurrent
+mutation while an analysis is running is unsupported.
 """
 struct PairSet
     pairs::Vector{FeaturePair}
@@ -203,6 +243,49 @@ struct PairSet
     labels::Vector{Union{String, Nothing}}
     n_entities::Int
     n_pairs::Int
+    transform::Symbol
+    source_matrix::Union{Nothing, Matrix{Float64}}
+end
+
+# Preserve the historical constructor for manually supplied coordinates. Their
+# original marginal transform cannot be recovered, so provenance is unknown.
+PairSet(pairs::Vector{FeaturePair}, names::Vector{Symbol}, ids::Vector{Int},
+        labels::Vector{Union{String, Nothing}}, n::Int, np::Int) =
+    PairSet(pairs, copy(names), copy(ids), copy(labels), n, np, :unknown, nothing)
+
+function _validate_pairset(ps::PairSet)
+    ps.n_entities > 0 || throw(ArgumentError("a PairSet needs at least one entity"))
+    length(ps.pairs) == ps.n_pairs || throw(DimensionMismatch("pair count changed"))
+    length(ps.entity_ids) == ps.n_entities || throw(DimensionMismatch("entity ID length changed"))
+    length(ps.labels) == ps.n_entities || throw(DimensionMismatch("entity label length changed"))
+    allunique(ps.entity_ids) || throw(ArgumentError("entity IDs must be unique"))
+    allunique(ps.feature_names) || throw(ArgumentError("feature names must be unique"))
+    p = length(ps.feature_names)
+    ps.n_pairs == p * (p - 1) ÷ 2 || throw(ArgumentError("PairSet must contain every unordered feature pair exactly once"))
+    allunique((fp.i, fp.j) for fp in ps.pairs) || throw(ArgumentError("PairSet contains duplicate feature pairs"))
+    if ps.source_matrix === nothing
+        ps.transform === :unknown || throw(ArgumentError("known transforms require source-matrix provenance; rebuild with build_pairs"))
+    else
+        ps.transform in (:rank, :none, :zscore) || throw(ArgumentError("source-backed PairSet requires a known transform"))
+    end
+    for fp in ps.pairs
+        1 <= fp.i < fp.j <= length(ps.feature_names) || throw(ArgumentError("invalid feature pair indices"))
+        (fp.name_i, fp.name_j) == (ps.feature_names[fp.i], ps.feature_names[fp.j]) ||
+            throw(ArgumentError("pair names do not match feature schema"))
+        length(fp.u) == length(fp.v) == ps.n_entities || throw(DimensionMismatch("pair coordinate lengths differ"))
+        all(isfinite, fp.u) && all(isfinite, fp.v) || throw(ArgumentError("pair coordinates must be finite"))
+    end
+    if ps.source_matrix !== nothing
+        size(ps.source_matrix) == (ps.n_entities, length(ps.feature_names)) ||
+            throw(DimensionMismatch("source matrix dimensions differ"))
+        all(isfinite, ps.source_matrix) || throw(ArgumentError("source features must be finite"))
+        expected = _transform_columns(ps.source_matrix, ps.transform)
+        for fp in ps.pairs
+            fp.u == expected[fp.i] && fp.v == expected[fp.j] ||
+                throw(ArgumentError("pair coordinates disagree with source data; rebuild with build_pairs"))
+        end
+    end
+    return ps
 end
 
 Base.length(ps::PairSet) = ps.n_pairs
@@ -225,12 +308,14 @@ reference set.
 When the boundary of the population is fuzzy, an entity is not simply
 "in" or "out" of the comparison set. `ReferenceWeights` lets each entity
 contribute to the reference cloud in proportion to its weight — by
-recency, by similarity to a focal genre, by sampling probability. A
-weight of `0` excludes an entity; uniform weights recover the plain
+recency, by a documented membership rule. They are not survey-design weights. A
+weight of `0` excludes an entity from reference mass while retaining it as a
+query where supported; uniform weights recover the plain
 "the collection is its own reference" case.
 
-Weights are honoured by the `:kde` and `:depth` methods of
-[`fit_typicality`](@ref); see that function for details.
+Nonuniform weights are supported by the `:kde` and `:depth` methods of
+[`fit_typicality`](@ref) and the Gaussian family of [`fit_copula`](@ref).
+Other estimators reject nonuniform weights; see their documented contracts.
 
 # Fields
 - `weights::Vector{Float64}`: One non-negative weight per entity
@@ -239,12 +324,34 @@ struct ReferenceWeights
     weights::Vector{Float64}
 
     function ReferenceWeights(weights::AbstractVector{<:Real})
+        values = Float64.(weights)
+        all(isfinite, values) || throw(ArgumentError("reference weights must be finite"))
         any(<(0), weights) &&
             throw(ArgumentError("reference weights must be non-negative"))
-        all(==(0), weights) &&
+        any(i -> weights[i] > 0 && values[i] == 0, eachindex(weights)) &&
+            throw(ArgumentError("positive reference weights must be representable as Float64"))
+        all(==(0), values) &&
             throw(ArgumentError("at least one reference weight must be positive"))
-        new(Float64.(weights))
+        new(values)
     end
+end
+
+# Revalidate mutable storage at fit time and normalize without overflowing sums.
+function _validated_weights(rw::ReferenceWeights, n::Integer; min_positive::Integer=1)
+    min_positive >= 1 || throw(ArgumentError("min_positive must be at least one"))
+    length(rw) == n || throw(DimensionMismatch("weights must have one entry per entity"))
+    values = rw.weights
+    all(isfinite, values) || throw(ArgumentError("reference weights must be finite"))
+    all(>=(0), values) || throw(ArgumentError("reference weights must be non-negative"))
+    count(>(0), values) >= min_positive || throw(ArgumentError("insufficient positive reference weights"))
+    # Preserve the supplied binary weights until the single final conversion.
+    # Floating reductions would make normalization depend on row order or on
+    # zero-mass rows. Estimators retain the original weights for later geometry.
+    exact = Rational{BigInt}.(values)
+    normalized = _rational_float.(exact ./ sum(exact))
+    any(i -> values[i] > 0 && normalized[i] == 0, eachindex(values)) &&
+        throw(ArgumentError("reference weight dynamic range is not representable"))
+    return normalized
 end
 
 """
@@ -266,19 +373,17 @@ end
 """
     TYPICALITY_METHODS
 
-The local-density scoring rules accepted by [`fit_typicality`](@ref).
+The descriptive pairwise rules accepted by [`fit_typicality`](@ref).
 
-- `:knn` — inverse distance to the `k`-th nearest neighbour. The simplest
-  density estimate; fast and assumption-free.
-- `:lof` — Local Outlier Factor (Breunig et al. 2000). Scores an entity's
-  density *relative to its neighbours' density*, so it adapts to a cloud
-  whose density varies from region to region — the natural choice for a
-  heterogeneous set with no uniform scale.
-- `:kde` — two-dimensional Gaussian kernel density. Smooth; honours
-  [`ReferenceWeights`](@ref).
-- `:depth` — Mahalanobis data depth. A centre-outward ordering of the
-  cloud that needs no distributional assumption; honours
-  [`ReferenceWeights`](@ref).
+- `:knn` — negative kth-neighbor distance; exact search, uniform weights.
+- `:lof` — reciprocal tie-inclusive Local Outlier Factor; uniform weights.
+- `:kde` — weighted leave-one-out log density: reflected compact kernels in
+  rank space, Gaussian kernels on real coordinates.
+- `:depth` — weighted global Mahalanobis centrality with an explicit singular
+  affine-support convention. This is not a local density.
+
+Gaussian and empirical beta copula families use [`fit_copula`](@ref); graph
+connectivity uses [`fit_graph_typicality`](@ref).
 """
 const TYPICALITY_METHODS = (:knn, :lof, :kde, :depth)
 
@@ -286,10 +391,10 @@ const TYPICALITY_METHODS = (:knn, :lof, :kde, :depth)
     feature_names(es::EntitySet) -> Vector{Symbol}
     feature_names(ps::PairSet)   -> Vector{Symbol}
 
-Names of the features, in column order.
+Detached copy of the feature names, in column order.
 """
-feature_names(es::EntitySet) = es.feature_names
-feature_names(ps::PairSet) = ps.feature_names
+feature_names(es::EntitySet) = copy(es.feature_names)
+feature_names(ps::PairSet) = copy(ps.feature_names)
 
 """
     n_entities(es::EntitySet) -> Int

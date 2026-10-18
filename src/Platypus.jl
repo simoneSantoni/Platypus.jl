@@ -1,32 +1,26 @@
 """
-    Platypus.jl - Entity atypicality in large, heterogeneous sets
+    Platypus
 
-A Julia package for measuring how *atypical* an entity is within a large
-and heterogeneous collection — a setting in which there is no clean,
-externally given reference set to compare the entity against.
+Descriptive entity atypicality relative to a supplied collection and feature
+schema. Pairwise neighborhood, bounded-density, depth and copula scores expose
+both raw components and normalized summaries. A separate full-feature graph
+estimator measures connectivity. Outcome fitting is descriptive OLS, and plot
+functions provide backend-independent recipes.
 
-Atypicality is built from the bottom up out of *pairs* of entity
-features. Each pair of features defines a two-dimensional cloud of
-points; the focal entity's position in that cloud is scored for *local*
-typicality; and the distribution of those `n(n-1)/2` pairwise scores is
-summarised, per entity, into a small number of statistics —
-*conventionality* (central tendency), *novelty* (lower tail), and
-*dispersion*. This is the design introduced by Uzzi, Mukherjee,
-Stringer & Jones (2013), "Atypical Combinations and Scientific Impact",
-generalised from discrete co-citation counts to continuous features.
-
-The public surface follows the layout of `VacancyChains.jl`: domain
-types (`Entity`, `EntitySet`, `FeaturePair`, `PairSet`,
-`ReferenceWeights`), verb-named entry points (`load_entities`,
-`build_pairs`, `fit_*`, `plot_*`), and a per-feature file layout
-(`entities.jl`, `pairs.jl`, `eda.jl`, `estimation.jl`,
-`visualization.jl`).
+The pairwise median/lower-tail design is inspired by Uzzi et al. (2013); IQR
+is an additional summary. Percentile normalization is not null calibration.
+See the manual and docs/research for method assumptions, validation and changes.
 """
 module Platypus
 
 using CSV
 using DataFrames
 using Printf
+using LinearAlgebra
+using SparseArrays
+import NearestNeighbors
+import Distributions
+using RecipesBase
 import Statistics: mean, std, median, quantile, cor
 import StatsBase: tiedrank, iqr, corspearman
 
@@ -49,6 +43,7 @@ export TypicalityResult
 export fit_typicality, fit_graph_typicality, fit_outcome, fit_copula
 export atypicality, conventionality, novelty, dispersion
 export scoretable, summarytable
+export analysis_metadata, OutcomeResult, TypicalityPlot, GraphTypicalityResult
 
 # Visualization
 export plot_feature_distributions, plot_pair_cloud, plot_correlation_heatmap
@@ -58,9 +53,15 @@ export plot_outcome_fit, plot_pair_heatmap
 
 include("types.jl")
 include("entities.jl")
+include("numerics.jl")
 include("pairs.jl")
 include("eda.jl")
+include("neighbors.jl")
+include("density.jl")
+include("depth.jl")
 include("estimation.jl")
+include("graph.jl")
+include("outcome.jl")
 include("visualization.jl")
 
 end # module

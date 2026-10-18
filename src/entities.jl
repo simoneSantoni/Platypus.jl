@@ -78,7 +78,11 @@ directly; strings are parsed. `missing` is rejected — impute or drop
 incomplete rows before loading, because the density estimators in
 [`fit_typicality`](@ref) have no missing-value semantics.
 """
-parse_feature(val::Real) = Float64(val)
-parse_feature(val::AbstractString) = parse(Float64, val)
+function parse_feature(val::Real)
+    x = Float64(val)
+    isfinite(x) || throw(ArgumentError("feature values must be finite"))
+    return x
+end
+parse_feature(val::AbstractString) = parse_feature(parse(Float64, val))
 parse_feature(::Missing) = throw(ArgumentError(
     "missing feature values are not supported; impute or drop rows before loading"))

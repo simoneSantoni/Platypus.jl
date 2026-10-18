@@ -1,0 +1,5 @@
+Sociology acceptance controls
+Julia 1.13.2
+Scope: identity/reference binding and preserved operational contracts
+Test Summary:                                   | Pass  Total  Time
+Sociology final identity and reference controls |   33     33  8.8s

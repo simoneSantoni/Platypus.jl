@@ -1,0 +1,13 @@
+8×4 DataFrame
+ Row │ example                            max_error    tolerance  status
+     │ String                             Float64      Float64    String
+─────┼───────────────────────────────────────────────────────────────────
+   1 │ triangle_depth_none_percentiles    0.0            1.0e-10  pass
+   2 │ triangle_depth_rank_percentiles    0.0            1.0e-10  pass
+   3 │ weighted_constant_kde_percentiles  0.0            1.0e-10  pass
+   4 │ lof_original_raw_oracle            2.22045e-16    1.0e-10  pass
+   5 │ lof_reflected_raw_oracle           2.22045e-16    1.0e-10  pass
+   6 │ lof_reflection_percentiles         0.0            1.0e-10  pass
+   7 │ depth_before_offset_raw_oracle     0.0            1.0e-10  pass
+   8 │ depth_after_offset_raw_oracle      0.0            1.0e-10  pass
+Exact oracle premises verified. Recorded violations: 0

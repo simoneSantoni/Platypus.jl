@@ -1,0 +1,4 @@
+Julia 1.13.2; Platypus 0.2.0; oracle precision 2048 bits
+Source SHA256: a60109d4a70036f7b7474d7a410e105b17f182f869b218332a45e5a0acb05f8c
+Primary acceptance requirement: query3 is below reference2 by a well-separated log-density difference.
+This does not demand resolving every exponentially smaller distinction between reference2 and reference4.

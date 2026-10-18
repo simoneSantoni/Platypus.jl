@@ -1,0 +1,10 @@
+Constant KDE raw: NamedTuple[(case = "constant_kde", entity = 1, oracle_raw = 0.0, package_raw = 2.7755575615628914e-17, oracle_score = 0.5, package_score = 0.5833333333333334), (case = "constant_kde", entity = 2, oracle_raw = 0.0, package_raw = 1.6653345369377348e-16, oracle_score = 0.5, package_score = 0.8333333333333333), (case = "constant_kde", entity = 3, oracle_raw = 0.0, package_raw = -1.1102230246251565e-16, oracle_score = 0.5, package_score = 0.25)]
+Beta exact densities: Rational{BigInt}[121//72, 9//8, 121//72]
+Gaussian grid exact rational covariance of rounded normal scores: 0//1
+Gaussian grid rho baseline: 0.0
+Gaussian grid rho with zero-weight copies: 3.4380156845217456e-17
+Gaussian grid max score change: 0.4600000000000002
+Existing feature-exchange flagged configurations: 91
+Original feature-exchange score violations: 91
+Prototype remaining feature-exchange score violations: 0
+Prototype maximum raw feature-exchange difference: 0.0

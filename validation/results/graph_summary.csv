@@ -1,0 +1,6 @@
+scenario,method,target,summary,mean_auc,min_auc,max_auc,mean_average_precision,mean_precision_at_m
+independent,self_tuning_graph,full_feature_connectivity,atypicality,0.5555555555555555,0.526463963963964,0.606418918918919,0.10549681598837544,0.05555555555555555
+dependence,self_tuning_graph,full_feature_connectivity,atypicality,0.9401276276276276,0.856418918918919,0.9847972972972973,0.840895265357676,0.75
+unequal_clusters,self_tuning_graph,full_feature_connectivity,atypicality,0.03528528528528529,0.021396396396396396,0.05067567567567568,0.04294285284331018,0.0
+irrelevant_features,self_tuning_graph,full_feature_connectivity,atypicality,0.8819444444444445,0.8665540540540541,0.8907657657657657,0.6232550445480302,0.5277777777777778
+higher_order,self_tuning_graph,full_feature_connectivity,atypicality,0.7929804804804804,0.7269144144144144,0.8958333333333334,0.5146179588046488,0.4166666666666667

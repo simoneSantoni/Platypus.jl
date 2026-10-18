@@ -1,0 +1,10 @@
+{
+  "source_sha256": "c7c96e892949130fa15a5b859a4f7c8eb1413e5e0e5529b26c7ad450c2c690c5",
+  "julia_version": "1.13.2",
+  "commands": [
+    "JULIA_DEPOT_PATH=/tmp/platypus-review-julia-depot:/home/simon/.julia julia --startup-file=no --project=. validation/consistency/repair_panel/sociology/acceptance.jl",
+    "JULIA_DEPOT_PATH=/tmp/platypus-review-julia-depot:/home/simon/.julia julia --startup-file=no --project=. -e 'using Test, Platypus, DataFrames; println(\"Julia \", VERSION); include(\"test/numerical_contracts.jl\")'"
+  ],
+  "acceptance_checks_passed": 33,
+  "contract_checks_passed": 130
+}

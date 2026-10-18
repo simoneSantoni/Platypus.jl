@@ -1,0 +1,5 @@
+Julia 1.13.2; Platypus 0.2.0; threads=2
+Source SHA256: a60109d4a70036f7b7474d7a410e105b17f182f869b218332a45e5a0acb05f8c
+Illustrative headline cutoff >=0.75; no calibrated decision or population-rate claim.
+Pair reversal counts use computed headline order; they do not certify exact mathematical ties.
+Triangle/constant-support expectations derive from the separately documented rational/algebraic oracles.

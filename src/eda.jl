@@ -16,6 +16,7 @@ Per-feature descriptive statistics. Columns: `feature`, `mean`, `std`,
 `min`, `q25`, `median`, `q75`, `max`.
 """
 function feature_summary(es::EntitySet)
+    _validate_entityset(es)
     rows = NamedTuple[]
     for c in 1:es.n_features
         x = es.matrix[:, c]
@@ -42,6 +43,7 @@ feature replaced by its rank rescaled to `(0, 1)`. This is the same
 transform [`build_pairs`](@ref) applies with `transform=:rank`.
 """
 function rank_matrix(es::EntitySet)
+    _validate_entityset(es)
     R = Matrix{Float64}(undef, es.n_entities, es.n_features)
     for c in 1:es.n_features
         R[:, c] = _rank_transform(@view es.matrix[:, c])
@@ -57,11 +59,14 @@ long-form `DataFrame` with columns `feature_a`, `feature_b`,
 `correlation`, one row per unordered pair.
 
 Strong correlations are the warning sign discussed in the manual: highly
-correlated features make their pair carry little independent information,
-so the `n(n-1)/2` pairwise typicality scores are not an i.i.d. sample.
+correlated features can create strong dependence across pair scores. Shared
+features and a shared fitted reference also prevent treating the pair scores as
+an i.i.d. sample. Within-pair correlation alone does not establish redundancy
+or justify downweighting that pair.
 See [`pair_redundancy`](@ref).
 """
 function pair_correlations(es::EntitySet)
+    _validate_entityset(es)
     C = corspearman(es.matrix)
     rows = NamedTuple[]
     for i in 1:(es.n_features - 1), j in (i + 1):es.n_features
@@ -80,22 +85,20 @@ end
 Redundancy diagnostic for the feature pairs of a [`PairSet`](@ref).
 
 For each pair, `abs_correlation` is the absolute correlation between the
-pair's two (transformed) coordinates, and `weight = 1 - abs_correlation`
-is a suggested down-weight: a pair whose two features are nearly collinear
-adds little to the aggregate and can be discounted when summarising the
-pairwise scores. Columns: `feature_a`, `feature_b`, `abs_correlation`,
-`weight`.
+pair's transformed coordinates. Undefined correlations (including constant
+features) remain `NaN`. Columns: `feature_a`, `feature_b`, `abs_correlation`.
+This is a descriptive diagnostic: within-pair correlation is not a justified
+aggregation weight and does not measure dependence between pairwise scores.
 """
 function pair_redundancy(ps::PairSet)
+    _validate_pairset(ps)
     rows = NamedTuple[]
     for fp in ps.pairs
         r = abs(cor(fp.u, fp.v))
-        isnan(r) && (r = 0.0)
         push!(rows, (
             feature_a       = fp.name_i,
             feature_b       = fp.name_j,
             abs_correlation = r,
-            weight          = 1.0 - r,
         ))
     end
     return DataFrame(rows)
@@ -110,6 +113,7 @@ Returns a `DataFrame` with columns `entity_id`, `label`, `distance`,
 sorted by increasing distance.
 """
 function nearest_entities(es::EntitySet, idx::Integer; k::Integer=5)
+    k >= 0 || throw(ArgumentError("k must be non-negative"))
     1 <= idx <= es.n_entities ||
         throw(BoundsError("entity index $idx out of range 1:$(es.n_entities)"))
     R = rank_matrix(es)
@@ -163,6 +167,7 @@ The feature pairs of a [`PairSet`](@ref) as a `DataFrame`, one row per
 pair. Columns: `pair_index`, `feature_a`, `feature_b`.
 """
 function pair_table(ps::PairSet)
+    _validate_pairset(ps)
     rows = NamedTuple[]
     for (p, fp) in enumerate(ps.pairs)
         push!(rows, (
